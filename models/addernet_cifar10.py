@@ -142,7 +142,7 @@ def resnet_layer_addernet(inputs,
     return x
 
 
-def resnet_v1(input_shape, depth, se_net=False, num_classes=10, **kwargs):
+def resnet_v1(input_shape, depth, num_classes=10, **kwargs):
     """ResNet Version 1 Model builder [a]
 
     Stacks of 2 x (3 x 3) Conv2D-BN-ReLU
