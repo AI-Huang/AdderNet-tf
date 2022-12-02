@@ -191,6 +191,7 @@ class Adder2D(Layer):
                  trainable=True,
                  name=None,
                  conv_op=None,
+                 automatic_differentiation=False,  # Default False
                  **kwargs):
         super(Adder2D, self).__init__(
             trainable=trainable,
@@ -228,6 +229,9 @@ class Adder2D(Layer):
         self._channels_first = self.data_format == 'channels_first'
         self._tf_data_format = conv_utils.convert_data_format(
             self.data_format, self.rank + 2)
+
+        # Automatic differentiation
+        self.automatic_differentiation = automatic_differentiation
 
     def _validate_init(self):
         if self.filters is not None and self.filters % self.groups != 0:
@@ -294,12 +298,14 @@ class Adder2D(Layer):
         W_col = tf.reshape(self.kernel, [-1, n_filters])  # n_filters last
 
         # adder conv
-        # Option 1, automatic differentiation
-        # outputs = tf.abs((tf.expand_dims(W_col, 0)-tf.expand_dims(X_col, 2)))
-        # outputs = - tf.reduce_sum(outputs, 1)
 
-        # Option 2, custom gradient
-        outputs = adder2d_im2col(X_col, W_col)
+        if self.automatic_differentiation:
+            # Option 1, automatic differentiation
+            outputs = tf.abs((tf.expand_dims(W_col, 0)-tf.expand_dims(X_col, 2)))
+            outputs = - tf.reduce_sum(outputs, 1)
+        else:
+            # Option 2, custom gradient
+            outputs = adder2d_im2col(X_col, W_col)
 
         # reshape outputs back
         # n_filters index last

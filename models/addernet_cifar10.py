@@ -124,7 +124,8 @@ def resnet_layer_addernet(inputs,
                    strides=strides,
                    padding='same',
                    kernel_initializer='he_normal',
-                   kernel_regularizer=l2(1e-4))
+                   kernel_regularizer=l2(1e-4),
+                   automatic_differentiation=True)
 
     x = inputs
     if conv_first:
