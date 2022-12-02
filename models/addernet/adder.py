@@ -294,11 +294,12 @@ class Adder2D(Layer):
         W_col = tf.reshape(self.kernel, [-1, n_filters])  # n_filters last
 
         # adder conv
-        outputs = tf.abs((tf.expand_dims(W_col, 0)-tf.expand_dims(X_col, 2)))
-        outputs = - tf.reduce_sum(outputs, 1)
+        # Option 1, automatic differentiation
+        # outputs = tf.abs((tf.expand_dims(W_col, 0)-tf.expand_dims(X_col, 2)))
+        # outputs = - tf.reduce_sum(outputs, 1)
 
-        # Optional, custom gradient
-        # outputs = adder2d_im2col(X_col, W_col)
+        # Option 2, custom gradient
+        outputs = adder2d_im2col(X_col, W_col)
 
         # reshape outputs back
         # n_filters index last
